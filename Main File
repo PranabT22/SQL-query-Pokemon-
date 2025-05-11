@@ -1,11 +1,60 @@
 SQL queries
-1
-2
-3
-4
-5
-6
-7
-8
-9
-10
+
+-List all Pokémon and their base experience values.
+SELECT pok_name, pok_base_experience
+FROM pokemon;
+
+-Retrieve all move names and their power values.
+  SELECT move_name, move_power AS PowerValue
+FROM moves;
+
+-List all abilities available in the database.
+SELECT abil_id
+FROM abilities;
+
+-Find all Pokémon that have a base attack (b_atk) greater than 100.
+SELECT p.pok_name, bs.b_atk
+FROM pokemon AS p
+JOIN base_stats AS bs
+ON p.pok_id = bs.pok_id
+WHERE bs.b_atk > 100;
+
+-Which Pokémon have more than one type?
+SELECT p.pok_name
+FROM pokemon AS p
+JOIN pokemon_types AS pt ON p.pok_id = pt.pok_id
+GROUP BY p.pok_name
+HAVING COUNT(pt.type_id) > 1;
+
+-List all moves with an accuracy greater than 90 and power greater than 60.
+  SELECT move_name, move_accuracy, move_power
+FROM moves
+WHERE move_accuracy > 90 and move_power > 60;
+
+
+-Show the average base_happiness for each habitat.
+SELECT ph.hab_name AS Habitat, AVG(pem.base_happiness) AS AverageBaseHappiness
+FROM pokemon_habitats AS ph
+JOIN pokemon_evolution_matchup AS pem
+  ON ph.hab_id = pem.hab_id
+GROUP BY ph.hab_name
+ORDER BY ph.hab_name ASC;
+
+
+-List all Pokémon with a hidden ability.
+SELECT *
+FROM pokemon AS p
+JOIN pokemon_abilities AS pa
+  ON p.pok_id = pa.pok_id
+WHERE pa.is_hidden IS NOT NULL;
+
+
+-Which Pokémon evolve at the lowest minimum level?
+SELECT p.pok_name, pe.evol_minimum_level
+FROM pokemon AS p
+JOIN pokemon_evolution_matchup AS pem ON p.pok_id = pem.pok_id
+JOIN pokemon_evolution AS pe ON pem.pok_id = pe.pok_id
+WHERE pe.evol_minimum_level IS NOT NULL
+ORDER BY pe.evol_minimum_level ASC
+LIMIT 1;
+
